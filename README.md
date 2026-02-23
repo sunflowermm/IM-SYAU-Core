@@ -2,7 +2,7 @@
   <img src="沈阳农业大学-logo-2048px.png" alt="沈阳农业大学校徽" width="160" />
 </p>
 
-<h1 align="center">IM-SYAU-Core 沈阳农业大学昆虫博物馆</h1>
+<h1 align="center">IM-SYAU-Core 沈阳农业大学昆虫博物馆智能导览核心</h1>
 
 <p align="center">
   基于 <strong>XRK-AGT</strong> 的智能导览 Core：蓝牙信标定位、展区信息、AI 问答（aistream + 知识库 MCP 工具）
