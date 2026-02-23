@@ -8,6 +8,11 @@
   基于 <strong>XRK-AGT</strong> 的智能导览 Core：蓝牙信标定位、展区信息、AI 问答（aistream + 知识库 MCP 工具）
 </p>
 
+<p align="center">
+  关联项目：
+  <a href="https://github.com/sunflowermm/IM-SYAU-ble-esp-mcpy-loader">IM-SYAU-ble-esp-mcpy-loader</a>
+</p>
+
 ---
 
 ## 关于 XRK-AGT
@@ -62,6 +67,22 @@ sequenceDiagram
   Stream-->>API: AI 回答
   API-->>前端: answer
   前端-->>游客: 展示回答
+```
+
+## 设备与事件链路（ESP32-S3 → XRK-AGT）
+
+```mermaid
+sequenceDiagram
+  participant ESP as ESP32-S3(loader.py)
+  participant WS as XRK-AGT WebSocket(/device)
+  participant SYS as system-Core(device.js)
+  participant P as IM-SYAU-Core 蓝牙插件
+  participant DB as data/blues/ble_data.json
+
+  ESP->>WS: ws://host:port/device
+  ESP->>SYS: type=data,data_type=ble_beacon_batch,data={beacons:[...]}
+  SYS->>P: em device.ble_beacon_batch(event_data=report)
+  P->>DB: 写入 devices/beacons/detections
 ```
 
 ---

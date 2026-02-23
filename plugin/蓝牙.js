@@ -43,13 +43,7 @@ export default class DeviceBLE extends plugin {
       Bot.on('device.ble_beacon_batch', async (e) => {
         await this.handleBLEData(e);
       });
-      
-      Bot.on('device.data', async (e) => {
-        if (e.event_data?.data_type === 'ble_beacon_batch') {
-          await this.handleBLEData(e);
-        }
-      });
-      
+
       logger.mark('[蓝牙插件] 事件监听器已注册');
     }, 1000);
   }
