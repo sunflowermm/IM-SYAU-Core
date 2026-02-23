@@ -1,0 +1,694 @@
+/* ==================== 关于项目页面专用样式 ==================== */
+.innovation-card {
+  background: linear-gradient(135deg, rgba(246, 255, 237, 0.95) 0%, rgba(183, 235, 143, 0.6) 100%);
+  border: 1px solid var(--border-green);
+  border-radius: var(--radius-xl);
+  padding: 40px;
+  color: var(--text-primary);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(82, 196, 26, 0.1);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  animation: fadeInUp 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) backwards;
+  backdrop-filter: blur(10px);
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  overflow-x: hidden;
+}
+
+.innovation-card:nth-child(1) { animation-delay: 0.1s; }
+.innovation-card:nth-child(2) { animation-delay: 0.2s; }
+.innovation-card:nth-child(3) { animation-delay: 0.3s; }
+.innovation-card:nth-child(4) { animation-delay: 0.4s; }
+
+.innovation-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 12px 32px rgba(82, 196, 26, 0.25);
+}
+
+.innovation-card::before {
+  content: '';
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 200px;
+  height: 200px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transition: transform 0.6s ease;
+}
+
+.innovation-card:hover::before {
+  transform: scale(1.2);
+}
+
+.tech-stack-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.tech-card {
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid var(--border-green);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  animation: fadeInUp 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) backwards;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  overflow-x: hidden;
+}
+
+.tech-card:nth-child(1) { animation-delay: 0.1s; }
+.tech-card:nth-child(2) { animation-delay: 0.2s; }
+.tech-card:nth-child(3) { animation-delay: 0.3s; }
+
+.tech-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--primary-green);
+  box-shadow: 0 8px 24px rgba(82, 196, 26, 0.2);
+  background: var(--bg-green);
+}
+
+/* 企业合作卡片 - 淡绿色主题 */
+.enterprise-card {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: 40px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 20px rgba(82, 196, 26, 0.1);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.enterprise-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 28px rgba(82, 196, 26, 0.15);
+}
+
+/* 平台卡片 - 优化布局，统一尺寸，确保平行卡片长宽一致 */
+.platform-card {
+  background: linear-gradient(135deg, rgba(246, 255, 237, 0.95) 0%, rgba(183, 235, 143, 0.6) 100%);
+  border: 1px solid var(--border-green);
+  border-radius: var(--radius-lg);
+  padding: 30px;
+  text-align: center;
+  color: var(--text-primary);
+  box-shadow: 0 4px 12px rgba(82, 196, 26, 0.1);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  backdrop-filter: blur(10px);
+  aspect-ratio: 1;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  overflow-x: hidden;
+}
+
+.platform-card:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(82, 196, 26, 0.3);
+}
+
+/* 智慧植保应用 - 淡绿色主题 */
+.smart-agriculture {
+  background: linear-gradient(135deg, var(--primary-green) 0%, var(--dark-green) 100%);
+  border-radius: var(--radius-xl);
+  padding: 40px;
+  margin-bottom: 30px;
+  color: white;
+  box-shadow: 0 10px 30px rgba(82, 196, 26, 0.25);
+  transition: all 0.4s ease;
+}
+
+.smart-agriculture:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 40px rgba(82, 196, 26, 0.35);
+}
+
+/* 智慧植保卡片 - 统一尺寸，确保平行卡片长宽一致 */
+.agriculture-card {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.agriculture-card:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-4px);
+}
+
+/* 项目成果卡片 - 优化布局，统一尺寸，确保平行卡片长宽一致 */
+.achievement-card {
+  background: linear-gradient(135deg, rgba(246, 255, 237, 0.95) 0%, rgba(183, 235, 143, 0.6) 100%);
+  border: 1px solid var(--border-green);
+  border-radius: var(--radius-lg);
+  padding: 30px;
+  text-align: center;
+  color: var(--text-primary);
+  box-shadow: 0 4px 12px rgba(82, 196, 26, 0.1);
+  transition: all 0.3s ease;
+  animation: fadeInUp 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) backwards;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+}
+
+.achievement-card:nth-child(1) { animation-delay: 0.1s; }
+.achievement-card:nth-child(2) { animation-delay: 0.2s; }
+.achievement-card:nth-child(3) { animation-delay: 0.3s; }
+.achievement-card:nth-child(4) { animation-delay: 0.4s; }
+
+.achievement-card:hover {
+  transform: translateY(-6px) scale(1.05);
+  box-shadow: 0 8px 24px rgba(82, 196, 26, 0.3);
+}
+
+/* 图片展示卡片 */
+.image-card {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(82, 196, 26, 0.1);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  background: white;
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+.image-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 24px rgba(82, 196, 26, 0.2);
+}
+
+.image-card img {
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.image-card:hover img {
+  transform: scale(1.05);
+}
+
+/* 服务器架构 - 淡绿色主题 */
+.server-architecture {
+  background: linear-gradient(135deg, var(--dark-green) 0%, var(--primary-green) 100%);
+  border-radius: var(--radius-xl);
+  padding: 40px;
+  margin-bottom: 30px;
+  color: white;
+  box-shadow: 0 10px 30px rgba(82, 196, 26, 0.25);
+  transition: all 0.4s ease;
+}
+
+.server-architecture:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 40px rgba(82, 196, 26, 0.35);
+}
+
+/* 优化手段 - 优化主色系，使用更柔和的绿色渐变 */
+.optimization-section {
+  background: linear-gradient(135deg, rgba(246, 255, 237, 0.95) 0%, rgba(183, 235, 143, 0.6) 100%);
+  border: 1px solid var(--border-green);
+  border-radius: var(--radius-xl);
+  padding: 50px;
+  margin-bottom: 50px;
+  color: var(--text-primary);
+  box-shadow: 0 4px 16px rgba(82, 196, 26, 0.1);
+  transition: all 0.4s ease;
+  backdrop-filter: blur(10px);
+}
+
+.optimization-section:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 40px rgba(82, 196, 26, 0.3);
+}
+
+.optimization-card {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: var(--radius-lg);
+  padding: 30px;
+  backdrop-filter: blur(10px);
+  border: 2px solid var(--border-green);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.optimization-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--primary-green);
+  box-shadow: 0 8px 24px rgba(82, 196, 26, 0.2);
+  background: white;
+}
+
+/* 平台展示网格 */
+/* 平台展示网格 - 统一尺寸，确保平行卡片长宽一致 */
+.platform-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 30px;
+  justify-items: center;
+  grid-auto-rows: 1fr;
+}
+
+.platform-icon {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  margin-bottom: 12px;
+}
+
+/* 机器人平台网格 - 统一尺寸，确保平行卡片长宽一致 */
+.robot-platform-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  grid-auto-rows: 1fr;
+}
+
+.robot-platform-grid > div {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
+.robot-platform-icon {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  margin-bottom: 12px;
+}
+
+/* 移动端优化 - 智能机器人构建平台icon */
+@media (max-width: 768px) {
+  .robot-platform-icon {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+/* 大屏幕优化 */
+@media (min-width: 1200px) {
+  .robot-platform-icon {
+    width: 120px;
+    height: 120px;
+  }
+}
+
+/* 智能机器人构建平台标题 - 响应式 */
+.robot-platform-title {
+  font-size: clamp(16px, 4vw, 20px) !important;
+}
+
+/* 项目成果网格 */
+/* 项目成果网格 - 统一尺寸，确保平行卡片长宽一致 */
+.achievement-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-bottom: 40px;
+  width: 100%;
+  box-sizing: border-box;
+  justify-items: center;
+  grid-auto-rows: 1fr;
+}
+
+/* 架构图片网格 */
+.architecture-image-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 企业实践展示 */
+.enterprise-practice-section {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: 50px;
+  margin-bottom: 50px;
+  box-shadow: 0 4px 20px rgba(82, 196, 26, 0.1);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 企业实践图片网格 - 三个卡片居中显示 */
+.practice-image-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+  .platform-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .achievement-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .architecture-image-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .practice-image-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .innovation-card,
+  .tech-card,
+  .achievement-card {
+    animation-delay: 0s !important;
+  }
+  
+  .innovation-card:hover,
+  .tech-card:hover,
+  .achievement-card:hover {
+    transform: translateY(-4px) scale(1.01);
+  }
+  
+  .platform-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .robot-platform-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .achievement-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  
+  .architecture-image-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .practice-image-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .enterprise-practice-section {
+    padding: 30px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .achievement-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .platform-icon {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .robot-platform-icon {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* 图片懒加载动画 */
+@keyframes imageFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.about-content img {
+  animation: imageFadeIn 0.6s ease-out;
+}
+
+/* 平滑滚动 */
+.about-content {
+  scroll-behavior: smooth;
+}
+
+/* 标题动画 */
+.about-content h2 {
+  position: relative;
+  display: inline-block;
+}
+
+.about-content h2::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--primary-green), transparent);
+  border-radius: 2px;
+  animation: lineExpand 0.8s ease-out;
+}
+
+@keyframes lineExpand {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  to {
+    width: 60px;
+    opacity: 1;
+  }
+}
+
+/* ==================== 响应式设计 - 移动端优化 ==================== */
+@media (max-width: 768px) {
+  /* 关于项目页面标题 - 移动端优化 */
+  .about-hero h1 {
+    font-size: clamp(24px, 6vw, 32px) !important;
+  }
+  
+  .about-hero h2 {
+    font-size: clamp(20px, 5vw, 26px) !important;
+  }
+  
+  .about-hero p {
+    font-size: clamp(14px, 3.5vw, 18px) !important;
+  }
+  
+  /* 章节标题 - 移动端优化 */
+  .about-content h2 {
+    font-size: clamp(24px, 6vw, 32px) !important;
+    margin-bottom: clamp(20px, 5vw, 40px) !important;
+  }
+  
+  /* 创新点卡片 - 移动端优化 */
+  .innovation-card {
+    padding: clamp(20px, 5vw, 40px) !important;
+  }
+  
+  .innovation-card h3 {
+    font-size: clamp(16px, 4vw, 20px) !important;
+  }
+  
+  .innovation-card p {
+    font-size: clamp(13px, 3.2vw, 16px) !important;
+  }
+  
+  /* 技术架构卡片 - 移动端优化 */
+  .tech-card {
+    padding: clamp(16px, 4vw, 20px) !important;
+  }
+  
+  .tech-card h3 {
+    font-size: clamp(16px, 4vw, 18px) !important;
+  }
+  
+  .tech-card img {
+    height: clamp(100px, 25vw, 120px) !important;
+    margin-bottom: clamp(8px, 2vw, 12px) !important;
+  }
+  
+  /* 企业合作卡片 - 移动端优化 */
+  .enterprise-card {
+    padding: clamp(24px, 6vw, 40px) !important;
+  }
+  
+  .enterprise-card h3 {
+    font-size: clamp(18px, 4.5vw, 24px) !important;
+  }
+  
+  .enterprise-card h4 {
+    font-size: clamp(16px, 4vw, 20px) !important;
+  }
+  
+  .enterprise-card p {
+    font-size: clamp(13px, 3.2vw, 16px) !important;
+  }
+  
+  /* 平台卡片 - 移动端优化 */
+  .platform-card {
+    padding: clamp(20px, 5vw, 30px) !important;
+    min-height: clamp(140px, 35vw, 180px) !important;
+  }
+  
+  .platform-icon {
+    width: clamp(48px, 12vw, 64px) !important;
+    height: clamp(48px, 12vw, 64px) !important;
+  }
+  
+  /* 智能机器人构建平台 - 移动端优化 */
+  .robot-platform-grid {
+    gap: clamp(12px, 3vw, 20px) !important;
+  }
+  
+  .robot-platform-grid > div {
+    padding: clamp(16px, 4vw, 20px) !important;
+  }
+  
+  /* 智慧植保应用 - 移动端优化 */
+  .smart-agriculture {
+    padding: clamp(24px, 6vw, 40px) !important;
+  }
+  
+  .smart-agriculture h3 {
+    font-size: clamp(18px, 4.5vw, 24px) !important;
+  }
+  
+  .agriculture-card {
+    padding: clamp(16px, 4vw, 24px) !important;
+  }
+  
+  .agriculture-card img {
+    height: clamp(100px, 25vw, 150px) !important;
+    margin-bottom: clamp(12px, 3vw, 16px) !important;
+  }
+  
+  .agriculture-card > div:first-of-type {
+    font-size: clamp(14px, 3.5vw, 18px) !important;
+  }
+  
+  .agriculture-card > div:last-of-type {
+    font-size: clamp(12px, 3vw, 14px) !important;
+  }
+  
+  /* 项目成果卡片 - 移动端优化 */
+  .achievement-card {
+    padding: clamp(20px, 5vw, 30px) !important;
+  }
+  
+  .achievement-card > div:first-of-type {
+    font-size: clamp(32px, 8vw, 48px) !important;
+  }
+  
+  .achievement-card > div:last-of-type {
+    font-size: clamp(13px, 3.2vw, 16px) !important;
+  }
+  
+  /* 技术架构区域 - 移动端优化 */
+  .tech-stack-section {
+    padding: clamp(24px, 6vw, 40px) !important;
+  }
+  
+  /* 网格布局 - 移动端优化 */
+  .platform-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: clamp(12px, 3vw, 20px) !important;
+  }
+  
+  .achievement-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: clamp(16px, 4vw, 24px) !important;
+  }
+  
+  /* 创新点网格 - 移动端单列 */
+  .innovation-section > div:last-child {
+    grid-template-columns: 1fr !important;
+    gap: clamp(20px, 5vw, 30px) !important;
+  }
+  
+  /* 技术架构网格 - 移动端单列 */
+  .tech-stack-section > div:last-child {
+    grid-template-columns: 1fr !important;
+    gap: clamp(16px, 4vw, 20px) !important;
+  }
+}
+
+/* 平板端优化 */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .about-hero h1 {
+    font-size: clamp(28px, 4vw, 36px) !important;
+  }
+  
+  .about-content h2 {
+    font-size: clamp(26px, 3.5vw, 32px) !important;
+  }
+  
+  .innovation-section > div:last-child {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .tech-stack-section > div:last-child {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* 大屏幕优化 */
+@media (min-width: 1200px) {
+  .about-hero h1 {
+    font-size: 36px !important;
+  }
+  
+  .about-content h2 {
+    font-size: 32px !important;
+  }
+}
+

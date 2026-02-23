@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>沈阳农业大学昆虫博物馆 - 智能导览</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/about-page.css">
+  <link rel="stylesheet" href="css/floating-ai.css">
+</head>
+<body>
+  <!-- 加载动画 -->
+  <div id="loading" class="loading">
+    <div class="spinner"></div>
+    <p>正在加载展区信息...</p>
+  </div>
+
+  <!-- 全局粒子背景效果容器 -->
+  <canvas id="particles-canvas" class="particles-canvas"></canvas>
+
+  <!-- ==================== 初始页面 ==================== -->
+  <div id="init-page" class="page active">
+    <div class="init-container">
+      <!-- Logo区域 - 使用PNG校徽 -->
+      <div class="logo-area">
+        <img src="images/logo.png" alt="沈阳农业大学校徽" class="logo-circle">
+        <h1 class="app-title">沈阳农业大学</h1>
+        <p class="app-subtitle">昆虫博物馆智能导览系统</p>
+      </div>
+
+      <!-- 快速选择信标 -->
+      <div class="quick-select">
+        <h3 class="quick-title">请选择您的信标</h3>
+        <div id="beacon-chips" class="beacon-chips">
+          <!-- 动态生成信标按钮 -->
+        </div>
+      </div>
+
+      <!-- 博物馆信息 -->
+      <div class="museum-info">
+        <p>辽宁省沈阳市沈河区东陵路120号</p>
+        <p>每周日 9:00-16:00，特定节假日开放</p>
+        <p>去工作人员处领取信标以获取最佳体验</p>
+      </div>
+    </div>
+
+    <!-- 全局Footer -->
+    <footer class="global-footer">
+      <div class="footer-content">
+        <div class="footer-buttons">
+          <button class="footer-link about-link" type="button" aria-label="关于项目">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16Z"/>
+            </svg>
+            关于项目
+          </button>
+          <span class="footer-divider">|</span>
+          <button id="license-btn" class="footer-link license-link" type="button" aria-label="查看开源许可证">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+            </svg>
+            开源许可证
+          </button>
+        </div>
+        <div class="footer-copyright">
+          <span class="footer-text">© 2025 沈阳农业大学昆虫博物馆</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ==================== 展区列表页 ==================== -->
+  <div id="list-page" class="page">
+    <!-- 页面头部 -->
+    <div class="page-header">
+      <button class="back-btn" id="list-back-btn" type="button" aria-label="返回首页">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+        </svg>
+      </button>
+      <div class="header-info">
+        <h2 id="beacon-title">信标名称</h2>
+        <div class="update-time" id="update-time">更新于：--:--</div>
+      </div>
+      <div class="signal-indicator">
+        <div class="signal-dot"></div>
+      </div>
+    </div>
+
+    <!-- 展区网格 -->
+    <div id="exhibition-grid" class="exhibition-grid">
+      <!-- 动态生成展区卡片 -->
+    </div>
+
+    <!-- 底部信息 -->
+    <div class="footer-info">
+      <p>共 <span id="total-exhibitions">0</span> 个展区可参观</p>
+      <p class="tip-text">点击展区卡片查看详细信息</p>
+    </div>
+
+    <!-- 参观人数统计图表 -->
+    <div class="stats-chart-container">
+      <div class="stats-chart">
+        <div class="chart-header">
+          <h3>智能设备使用统计</h3>
+          <p class="chart-subtitle">每周日参观人次（2025年9月-11月）</p>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="visitor-chart" width="800" height="200"></canvas>
+        </div>
+        <div class="chart-footer">
+          <span class="chart-total">累计使用：<strong id="total-visitors">0</strong> 人次</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 全局Footer -->
+    <footer class="global-footer">
+      <div class="footer-content">
+        <div class="footer-buttons">
+          <button class="footer-link about-link" type="button" aria-label="关于项目">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16Z"/>
+            </svg>
+            关于项目
+          </button>
+          <span class="footer-divider">|</span>
+          <button class="footer-link license-link" type="button" aria-label="查看开源许可证">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+            </svg>
+            开源许可证
+          </button>
+        </div>
+        <div class="footer-copyright">
+          <span class="footer-text">© 2025 沈阳农业大学昆虫博物馆</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ==================== 展区详情页 ==================== -->
+  <div id="detail-page" class="page">
+    <!-- 详情页头部 -->
+    <div class="detail-header">
+      <button class="back-btn" id="detail-back-btn" type="button" aria-label="返回展区列表">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+        </svg>
+      </button>
+      <div class="detail-title">
+        <h2 id="detail-exhibition-name">展区名称</h2>
+        <div class="detail-meta">
+          <span class="signal-badge">
+            <svg viewBox="0 0 24 24" fill="currentColor" style="width:14px;height:14px;margin-right:4px;">
+              <path d="M12,2C8.13,2 5,5.13 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9C19,5.13 15.87,2 12,2M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5Z"/>
+            </svg>
+            在线
+          </span>
+          <span class="time-badge" id="detail-update-time">更新于：--:--</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 展区详情内容 -->
+    <div id="detail-content" class="detail-content">
+      <!-- 动态加载HTML内容 -->
+    </div>
+
+    <!-- AI问答区域 -->
+    <div class="ai-section">
+      <div class="ai-header">
+        <div class="ai-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M21,16.5C21,16.88 20.79,17.21 20.47,17.38L12.57,21.82C12.41,21.94 12.21,22 12,22C11.79,22 11.59,21.94 11.43,21.82L3.53,17.38C3.21,17.21 3,16.88 3,16.5V7.5C3,7.12 3.21,6.79 3.53,6.62L11.43,2.18C11.59,2.06 11.79,2 12,2C12.21,2 12.41,2.06 12.57,2.18L20.47,6.62C20.79,6.79 21,7.12 21,7.5V16.5M12,4.15L5,8.09V15.91L12,19.85L19,15.91V8.09L12,4.15Z"/>
+          </svg>
+        </div>
+        <div>
+          <h3>沈小农 - 智能导览助手</h3>
+          <p class="ai-subtitle">我是沈小农，可以回答关于这个展区的任何问题</p>
+        </div>
+      </div>
+
+      <!-- 预设问题 -->
+      <div id="preset-questions" class="preset-questions">
+        <!-- 动态生成预设问题按钮 -->
+      </div>
+
+      <!-- 自定义问题 -->
+      <div class="custom-question">
+        <textarea id="custom-input" placeholder="输入您想问的问题..." rows="3"></textarea>
+        <button id="ask-btn" class="ask-btn" type="button" aria-label="发送问题">
+          <svg viewBox="0 0 24 24" fill="currentColor" style="width:20px;height:20px;" aria-hidden="true">
+            <path d="M2,21L23,12L2,3V10L17,12L2,14V21Z"/>
+          </svg>
+          发送问题
+        </button>
+      </div>
+
+      <!-- AI回答容器 -->
+      <div id="ai-answer-container"></div>
+    </div>
+
+    <!-- 全局Footer -->
+    <footer class="global-footer">
+      <div class="footer-content">
+        <div class="footer-buttons">
+          <button class="footer-link about-link" type="button" aria-label="关于项目">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16Z"/>
+            </svg>
+            关于项目
+          </button>
+          <span class="footer-divider">|</span>
+          <button class="footer-link license-link" type="button" aria-label="查看开源许可证">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+            </svg>
+            开源许可证
+          </button>
+        </div>
+        <div class="footer-copyright">
+          <span class="footer-text">© 2025 沈阳农业大学昆虫博物馆</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ==================== 开源许可证页面 ==================== -->
+  <div id="license-page" class="page">
+    <!-- 许可证页面头部 -->
+    <div class="page-header">
+      <button class="back-btn" id="license-back-btn" type="button" aria-label="返回上一页">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+        </svg>
+      </button>
+      <div class="header-info">
+        <h2>开源许可证</h2>
+        <div class="update-time">SYAU-IM-GPLv3-2025</div>
+      </div>
+    </div>
+
+    <!-- 许可证内容 -->
+    <div class="license-content">
+      <div class="license-hero">
+        <div class="license-badge">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M9,10H7V12H9V10M13,10H11V12H13V10M17,10H15V12H17V10M19,3H18V1H16V3H8V1H6V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V8H19V19Z"/>
+          </svg>
+          <span>GPL v3.0</span>
+        </div>
+        <h2>沈阳农业大学昆虫博物馆开源资源许可证</h2>
+        <p class="license-subtitle">基于GNU通用公共许可证版本3（GPLv3）核心条款</p>
+      </div>
+
+      <div class="license-section">
+        <h3>许可证概述</h3>
+        <div class="license-box">
+          <p><strong>许可证标识：</strong>SYAU-IM-GPLv3-2025</p>
+          <p><strong>版权所有：</strong>沈阳农业大学昆虫博物馆</p>
+          <p><strong>授权类型：</strong>著佐权型（Copyleft）开源许可证</p>
+          <p><strong>适用范围：</strong>本系统指定的科普文本、展品图片、教育课件等开源资源</p>
+        </div>
+      </div>
+
+      <div class="license-section">
+        <h3>您可以自由地</h3>
+        <ul class="license-list">
+          <li><strong>使用：</strong>用于科普教育、学术研究、商业活动等任何合法场景</li>
+          <li><strong>复制：</strong>自由复制开源资源，复制数量不受限制</li>
+          <li><strong>分发：</strong>通过线上线下等任何渠道分发开源资源及衍生作品</li>
+          <li><strong>改编：</strong>基于开源资源创作衍生作品</li>
+        </ul>
+      </div>
+
+      <div class="license-section">
+        <h3>您必须遵守</h3>
+        <ul class="license-list warning">
+          <li><strong>衍生作品开源义务：</strong>所有基于本许可证开源资源创作的衍生作品，必须采用与本许可证条款实质一致的开源许可证</li>
+          <li><strong>源文件提供义务：</strong>分发开源资源或衍生作品时，必须同时提供对应的源文件</li>
+          <li><strong>版权声明保留：</strong>在开源资源及衍生作品的显著位置保留原版权声明和许可证全文</li>
+          <li><strong>许可证传递：</strong>分发时必须随附本许可证完整文本，确保接收方知晓全部条款</li>
+        </ul>
+      </div>
+
+      <div class="license-section">
+        <h3>兼容性说明</h3>
+        <div class="license-box">
+          <p><strong>次级兼容：</strong>本许可证与GPLv3、木兰PubL-2.0等著佐权型许可证具有次级兼容性</p>
+          <p><strong>不兼容：</strong>与MIT、Apache-2.0等宽松型许可证不兼容</p>
+        </div>
+      </div>
+
+      <div class="license-section">
+        <h3>适用法律</h3>
+        <div class="license-box">
+          <ul class="license-list compact">
+            <li>《中华人民共和国著作权法》</li>
+            <li>《信息网络传播权保护条例》</li>
+            <li>GB/T 44272-2024《开源许可证框架标准》</li>
+          </ul>
+          <p style="margin-top: 12px;"><strong>管辖法院：</strong>许可方所在地有管辖权的人民法院</p>
+        </div>
+      </div>
+
+      <div class="license-section">
+        <h3>免责声明</h3>
+        <div class="license-box disclaimer">
+          <p>开源资源以"现状提供"为原则，许可方不对资源的完整性、准确性、适用性作出任何明示或暗示保证。因使用资源内容导致的任何损失，许可方不承担赔偿责任。</p>
+          <p style="margin-top: 12px;">被许可方违反本许可证约定使用资源，导致第三方索赔或行政处罚的，由被许可方自行承担全部责任。</p>
+        </div>
+      </div>
+
+      <div class="license-footer-box">
+        <p><strong>完整许可证文本</strong></p>
+        <p>本页面仅为许可证概要说明。完整的许可证条款请参见项目文档或访问博物馆官方网站。</p>
+        <p style="margin-top: 12px;"><strong>联系方式</strong></p>
+        <p>如有疑问，请访问沈阳农业大学昆虫博物馆官方网站获取联系方式。</p>
+      </div>
+    </div>
+
+    <!-- 参观人数统计图表 -->
+    <div class="stats-chart-container">
+      <div class="stats-chart">
+        <div class="chart-header">
+          <h3>智能设备使用统计</h3>
+          <p class="chart-subtitle">每周日参观人次（2025年9月-11月）</p>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="visitor-chart-license" width="800" height="200"></canvas>
+        </div>
+        <div class="chart-footer">
+          <span class="chart-total">累计使用：<strong id="total-visitors-license">0</strong> 人次</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 全局Footer -->
+    <footer class="global-footer">
+      <div class="footer-content">
+        <div class="footer-buttons">
+          <button class="footer-link about-link" type="button" aria-label="关于项目">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16Z"/>
+            </svg>
+            关于项目
+          </button>
+          <span class="footer-divider">|</span>
+          <button class="footer-link license-link active" type="button" aria-label="当前页面：开源许可证" aria-current="page">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+            </svg>
+            开源许可证
+          </button>
+        </div>
+        <div class="footer-copyright">
+          <span class="footer-text">© 2025 沈阳农业大学昆虫博物馆</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ==================== 关于项目页面 ==================== -->
+  <div id="about-page" class="page">
+    <!-- 关于项目页面头部 -->
+    <div class="page-header">
+      <button class="back-btn" id="about-back-btn" type="button" aria-label="返回上一页">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+        </svg>
+      </button>
+      <div class="header-info">
+        <h2>关于项目</h2>
+        <div class="update-time">SYAU-IM-Digital-2025</div>
+      </div>
+    </div>
+
+    <!-- 关于项目内容 -->
+    <div class="about-content">
+      <!-- 项目标题区域 -->
+      <div class="about-hero">
+        <div style="position: relative; z-index: 1;">
+          <h1 style="font-size: 36px; font-weight: 700; margin-bottom: 16px; text-shadow: 0 2px 10px rgba(0,0,0,0.2); color: white;">沈阳农业大学昆虫博物馆</h1>
+          <h2 style="font-size: 28px; font-weight: 600; margin-bottom: 12px; opacity: 0.95; color: white;">数字化讲解平台</h2>
+          <p style="font-size: 18px; opacity: 0.9; max-width: 800px; margin: 0 auto; line-height: 1.8; color: white;">基于BLE信标定位的智能导览系统 · 企业级解决方案</p>
+        </div>
+      </div>
+
+      <!-- 项目创新点 -->
+      <div class="innovation-section" style="margin-bottom: 50px;">
+        <h2 style="font-size: 32px; font-weight: 700; text-align: center; margin-bottom: 40px; color: #262626; display: flex; align-items: center; justify-content: center; gap: 12px;">
+          <svg style="width: 32px; height: 32px;" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16Z"/>
+          </svg>
+          项目创新点
+        </h2>
+        
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; margin-bottom: 40px; grid-auto-rows: 1fr; align-items: stretch;">
+          <!-- 1. 它更快 -->
+          <div class="innovation-card" style="color: var(--text-primary);">
+            <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+            <div style="position: relative; z-index: 1;">
+              <img src="images/about-fast-icon.jpg" alt="快速响应" style="width: 100%; max-width: 300px; height: 200px; border-radius: 12px; object-fit: cover; margin: 0 auto 20px; display: block; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+              <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 16px;">1. 它更快</h3>
+              <p style="line-height: 1.8; opacity: 0.95; margin-bottom: 20px;">
+                基于流式ASR + LLM + TTS系统，确保实时数据传输。采用专业的Node.js无服务器通信架构，
+                服务访问和转发延迟极低，响应速度远超传统方案。
+              </p>
+              <div style="background: rgba(255,255,255,0.8); padding: 16px; border-radius: 12px; backdrop-filter: blur(10px); border: 1px solid var(--border-green); text-align: center;">
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">实时响应</div>
+                <div style="font-size: 24px; font-weight: 700; color: var(--primary-green);">&lt; 200ms</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. 它更稳 -->
+          <div class="innovation-card" style="color: var(--text-primary);">
+            <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+            <div style="position: relative; z-index: 1;">
+              <img src="images/about-stable-icon.jpg" alt="稳定架构" style="width: 100%; max-width: 300px; height: 200px; border-radius: 12px; object-fit: cover; margin: 0 auto 20px; display: block; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+              <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 16px;">2. 它更稳</h3>
+              <p style="line-height: 1.8; opacity: 0.95; margin-bottom: 20px;">
+                采用云服务架构和原生ESP-IDF开发环境，基于自有产品文档设计编程，
+                减少物理设备磨损，降低计算压力，系统运行稳定可靠。
+              </p>
+              <div style="background: rgba(255,255,255,0.8); padding: 16px; border-radius: 12px; backdrop-filter: blur(10px); border: 1px solid var(--border-green); text-align: center;">
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">系统稳定性</div>
+                <div style="font-size: 24px; font-weight: 700; color: var(--primary-green);">99.9%</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. 它更便宜 -->
+          <div class="innovation-card" style="color: var(--text-primary);">
+            <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+            <div style="position: relative; z-index: 1;">
+              <img src="images/about-cost-icon.jpg" alt="成本对比" style="width: 100%; max-width: 300px; height: 200px; border-radius: 12px; object-fit: cover; margin: 0 auto 20px; display: block; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+              <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 16px;">3. 它更便宜</h3>
+              <p style="line-height: 1.8; opacity: 0.95; margin-bottom: 20px;">
+                成本效益极高，无需雷达和专用引导Lora模块。相比北京等先进博物馆使用的激光雷达3D检测系统，
+                本系统包含25个模块和20个信标，含锂电池总成本约1800元，性价比突出。
+              </p>
+              <div style="background: rgba(255,255,255,0.8); padding: 16px; border-radius: 12px; backdrop-filter: blur(10px); border: 1px solid var(--border-green); text-align: center;">
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">总成本</div>
+                <div style="font-size: 24px; font-weight: 700; color: var(--primary-green);">¥1,800</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. 它更好用 -->
+          <div class="innovation-card" style="color: var(--text-primary);">
+            <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+            <div style="position: relative; z-index: 1;">
+              <img src="images/about-dev-icon.jpg" alt="开发友好" style="width: 100%; max-width: 300px; height: 200px; border-radius: 12px; object-fit: cover; margin: 0 auto 20px; display: block; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+              <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 16px;">4. 它更好用</h3>
+              <p style="line-height: 1.8; opacity: 0.95; margin-bottom: 20px;">
+                二次开发友好，提供清晰的开发文档、可见的开发结构和明确的开发路线图。
+                后端服务架构优秀，支持企业构建ERP系统，便于进一步定制和集成。
+              </p>
+              <div style="background: rgba(255,255,255,0.8); padding: 16px; border-radius: 12px; backdrop-filter: blur(10px); border: 1px solid var(--border-green); text-align: center;">
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">开发文档</div>
+                <div style="font-size: 24px; font-weight: 700; color: var(--primary-green);">完整</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 技术架构 -->
+      <div class="tech-stack-section" style="background: linear-gradient(135deg, var(--bg-green) 0%, white 100%); border-radius: 20px; padding: 40px; margin-bottom: 50px; border: 2px solid var(--border-green);">
+          <h2 style="font-size: 32px; font-weight: 700; text-align: center; margin-bottom: 30px; display: flex; align-items: center; justify-content: center; gap: 12px;">
+          <svg style="width: 32px; height: 32px;" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16Z"/>
+          </svg>
+          技术架构
+        </h2>
+        
+        <div class="tech-stack-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; justify-items: center; grid-auto-rows: 1fr; align-items: stretch; max-width: 1200px; margin: 0 auto;">
+          <!-- 后端 -->
+          <div class="tech-card" style="max-width: 100%;">
+            <img src="images/about-backend.jpg" alt="后端架构" style="width: 100%; height: 120px; border-radius: 12px; margin-bottom: 12px; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+            <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">后端服务</h3>
+            <div style="background: var(--bg-green); padding: 12px; border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--border-green);">
+              <div style="font-size: 28px; font-weight: 700; margin-bottom: 6px; color: var(--primary-green);">Node.js</div>
+              <div style="font-size: 13px; color: var(--text-secondary);">无服务器架构</div>
+            </div>
+            <ul style="text-align: left; line-height: 1.8; color: var(--text-secondary); font-size: 13px; margin: 0; padding-left: 20px;">
+              <li>RESTful API设计</li>
+              <li>实时数据流处理</li>
+              <li>云服务集成</li>
+              <li>企业级ERP支持</li>
+            </ul>
+          </div>
+
+          <!-- 前端 -->
+          <div class="tech-card">
+            <img src="images/about-frontend.jpg" alt="前端界面" style="width: 100%; height: 120px; border-radius: 12px; margin-bottom: 12px; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+            <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">前端界面</h3>
+            <div style="background: var(--bg-green); padding: 12px; border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--border-green);">
+              <div style="font-size: 28px; font-weight: 700; margin-bottom: 6px; color: var(--primary-green);">现代Web</div>
+              <div style="font-size: 13px; color: var(--text-secondary);">响应式设计</div>
+            </div>
+            <ul style="text-align: left; line-height: 1.8; color: var(--text-secondary); font-size: 13px; margin: 0; padding-left: 20px;">
+              <li>FLIP动画技术</li>
+              <li>实时数据更新</li>
+              <li>平滑过渡效果</li>
+              <li>移动端适配</li>
+            </ul>
+          </div>
+
+          <!-- 嵌入式 -->
+          <div class="tech-card">
+            <img src="images/about-embedded.jpg" alt="嵌入式系统" style="width: 100%; height: 120px; border-radius: 12px; margin-bottom: 12px; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+            <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">嵌入式系统</h3>
+            <div style="background: var(--bg-green); padding: 12px; border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--border-green);">
+              <div style="font-size: 28px; font-weight: 700; margin-bottom: 6px; color: var(--primary-green);">ESP-IDF</div>
+              <div style="font-size: 13px; color: var(--text-secondary);">原生开发环境</div>
+            </div>
+            <ul style="text-align: left; line-height: 1.8; color: var(--text-secondary); font-size: 13px; margin: 0; padding-left: 20px;">
+              <li>BLE信标定位</li>
+              <li>低功耗设计</li>
+              <li>稳定可靠运行</li>
+              <li>模块化架构</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 企业级合作规划 -->
+      <div class="enterprise-section" style="margin-bottom: 50px;">
+        <h2 style="font-size: 32px; font-weight: 700; text-align: center; margin-bottom: 40px; color: #262626; display: flex; align-items: center; justify-content: center; gap: 12px;">
+          <svg style="width: 32px; height: 32px;" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16Z"/>
+          </svg>
+          企业级合作规划与业务拓展
+        </h2>
+
+        <!-- 多平台宣传 -->
+        <div class="enterprise-card">
+          <h3 style="font-size: 24px; font-weight: 700; margin-bottom: 24px; color: var(--text-primary);">
+            试点多平台宣传
+          </h3>
+          <p style="line-height: 1.8; color: #595959; margin-bottom: 30px; font-size: 16px;">
+            企业级合作的动态迁移与架构定制，支持多平台智能机器人构建，实现跨平台业务拓展。
+          </p>
+          
+          <div class="platform-grid">
+            <div class="platform-card">
+              <img src="images/platform-1688-icon.png" alt="1688" class="platform-icon">
+              <div style="font-size: 20px; font-weight: 600; margin-top: 12px; color: var(--primary-green);">1688</div>
+              <div style="font-size: 14px; color: var(--text-secondary);">B2B平台</div>
+            </div>
+            <div class="platform-card">
+              <img src="images/platform-pdd-icon.png" alt="拼多多" class="platform-icon">
+              <div style="font-size: 20px; font-weight: 600; margin-top: 12px; color: var(--primary-green);">拼多多</div>
+              <div style="font-size: 14px; color: var(--text-secondary);">社交电商</div>
+            </div>
+            <div class="platform-card">
+              <img src="images/platform-taobao-icon.png" alt="淘宝" class="platform-icon">
+              <div style="font-size: 20px; font-weight: 600; margin-top: 12px; color: var(--primary-green);">淘宝</div>
+              <div style="font-size: 14px; color: var(--text-secondary);">电商平台</div>
+            </div>
+            <div class="platform-card">
+              <img src="images/platform-jd-icon.png" alt="京东" class="platform-icon">
+              <div style="font-size: 20px; font-weight: 600; margin-top: 12px; color: var(--primary-green);">京东</div>
+              <div style="font-size: 14px; color: var(--text-secondary);">电商平台</div>
+            </div>
+          </div>
+
+          <div style="background: var(--bg-green); border-radius: 16px; padding: 30px; border: 1px solid var(--border-green);">
+            <h4 class="robot-platform-title" style="font-size: 20px; font-weight: 700; margin-bottom: 20px; color: var(--text-primary);">智能机器人构建平台</h4>
+            <div class="robot-platform-grid">
+              <div style="background: white; border-radius: 12px; padding: 20px; border: 1px solid var(--border-green); transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+                <img src="images/platform-wechat-icon.png" alt="微信" class="robot-platform-icon">
+                <div style="font-weight: 600; margin-top: 12px; margin-bottom: 8px; color: var(--text-primary);">QQ / 微信</div>
+                <div style="font-size: 14px; color: var(--text-secondary);">智能客服机器人</div>
+              </div>
+              <div style="background: white; border-radius: 12px; padding: 20px; border: 1px solid var(--border-green); transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+                <img src="images/platform-dingtalk-icon.png" alt="钉钉" class="robot-platform-icon">
+                <div style="font-weight: 600; margin-top: 12px; margin-bottom: 8px; color: var(--text-primary);">企业微信 / 钉钉</div>
+                <div style="font-size: 14px; color: var(--text-secondary);">企业级智能助手</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 智慧植保应用 -->
+        <div class="smart-agriculture">
+          <h3 style="font-size: 24px; font-weight: 700; margin-bottom: 24px; color: white;">
+            智慧植保应用场景
+          </h3>
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; grid-auto-rows: 1fr; align-items: stretch;">
+            <div class="agriculture-card">
+              <img src="images/agriculture-disease-monitor.jpg" alt="植物病害监控记录" style="width: 100%; height: 150px; border-radius: 12px; margin-bottom: 16px; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+              <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px; color: white;">植物病害监控记录</div>
+              <div style="font-size: 14px; opacity: 0.9; color: white;">实时监测、智能识别、数据记录</div>
+            </div>
+            <div class="agriculture-card">
+              <img src="images/agriculture-drone.jpg" alt="无人车与无人机" style="width: 100%; height: 150px; border-radius: 12px; margin-bottom: 16px; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+              <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px; color: white;">无人车与无人机</div>
+              <div style="font-size: 14px; opacity: 0.9; color: white;">自动化作业、精准定位</div>
+            </div>
+            <div class="agriculture-card">
+              <img src="images/agriculture-irrigation.jpg" alt="智能灌溉" style="width: 100%; height: 150px; border-radius: 12px; margin-bottom: 16px; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+              <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px; color: white;">智能灌溉</div>
+              <div style="font-size: 14px; opacity: 0.9; color: white;">精准控制、节水高效</div>
+            </div>
+            <div class="agriculture-card">
+              <img src="images/agriculture-pest-control.jpg" alt="病虫靶向杀害与捕捉" style="width: 100%; height: 150px; border-radius: 12px; margin-bottom: 16px; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+              <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px; color: white;">病虫靶向杀害与捕捉</div>
+              <div style="font-size: 14px; opacity: 0.9; color: white;">精准识别、智能防治</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 项目成果展示 -->
+      <div class="achievements-section" style="background: white; border-radius: 20px; padding: 50px; margin-bottom: 50px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+        <h2 style="font-size: 32px; font-weight: 700; text-align: center; margin-bottom: 40px; color: #262626; display: flex; align-items: center; justify-content: center; gap: 12px;">
+          <svg style="width: 32px; height: 32px;" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16Z"/>
+          </svg>
+          项目成果与前景
+        </h2>
+
+        <div class="achievement-grid">
+          <div class="achievement-card">
+            <div style="font-size: 48px; font-weight: 700; margin-bottom: 8px; color: var(--primary-green);">25</div>
+            <div style="font-size: 16px; color: var(--text-secondary);">接收模块</div>
+          </div>
+          <div class="achievement-card">
+            <div style="font-size: 48px; font-weight: 700; margin-bottom: 8px; color: var(--primary-green);">20</div>
+            <div style="font-size: 16px; color: var(--text-secondary);">信标设备</div>
+          </div>
+          <div class="achievement-card">
+            <div style="font-size: 48px; font-weight: 700; margin-bottom: 8px; color: var(--primary-green);">&lt;200ms</div>
+            <div style="font-size: 16px; color: var(--text-secondary);">响应延迟</div>
+          </div>
+          <div class="achievement-card">
+            <div style="font-size: 48px; font-weight: 700; margin-bottom: 8px; color: var(--primary-green);">99.9%</div>
+            <div style="font-size: 16px; color: var(--text-secondary);">系统稳定性</div>
+          </div>
+        </div>
+
+
+        <!-- 服务器架构图 -->
+        <div class="server-architecture">
+          <h3 style="font-size: 24px; font-weight: 700; margin-bottom: 24px; text-align: center; color: white;">企业级服务器架构</h3>
+          <img src="images/about-server-racks.jpg" alt="服务器架构" style="width: 100%; max-width: 100%; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+          <p style="text-align: center; margin-top: 20px; opacity: 0.9; font-size: 16px; color: white;">
+            云服务架构，支持高并发、高可用、弹性扩展
+          </p>
+        </div>
+      </div>
+
+      <!-- 企业实践展示 -->
+      <div class="enterprise-practice-section">
+        <h2 style="font-size: 32px; font-weight: 700; text-align: center; margin-bottom: 40px; color: var(--text-primary); display: flex; align-items: center; justify-content: center; gap: 12px;">
+          <svg style="width: 32px; height: 32px;" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16Z"/>
+          </svg>
+          企业实践展示
+        </h2>
+        <div class="practice-intro" style="background: var(--bg-green); border-radius: 16px; padding: 30px; margin-bottom: 30px; border: 1px solid var(--border-green);">
+          <h3 style="font-size: 24px; font-weight: 700; margin-bottom: 16px; color: var(--text-primary);">梅泽金属制品有限公司智能导览系统</h3>
+          <p style="line-height: 1.8; color: var(--text-secondary); font-size: 16px; margin-bottom: 0;">
+            与沈农昆博项目同根同源，基于相同的技术架构和设计理念，为梅泽金属制品有限公司定制开发的智能导览系统。
+            展示了项目的创新创业潜力和企业级应用能力，证明了技术方案的通用性和可扩展性。
+          </p>
+        </div>
+        <div class="practice-image-grid" style="max-width: 1200px; margin: 0 auto;">
+          <div class="image-card">
+            <img src="images/practice-meize-1.jpg" alt="梅泽金属智能导览系统截图1" style="width: 100%; height: 300px; object-fit: cover;">
+            <div style="padding: 16px; background: white;">
+              <div style="font-weight: 600; margin-bottom: 8px; color: var(--text-primary);">系统界面展示</div>
+              <div style="font-size: 14px; color: var(--text-secondary);">智能导览系统主界面</div>
+            </div>
+          </div>
+          <div class="image-card">
+            <img src="images/practice-meize-2.jpg" alt="梅泽金属智能导览系统截图2" style="width: 100%; height: 300px; object-fit: cover;">
+            <div style="padding: 16px; background: white;">
+              <div style="font-weight: 600; margin-bottom: 8px; color: var(--text-primary);">功能模块展示</div>
+              <div style="font-size: 14px; color: var(--text-secondary);">企业级功能应用</div>
+            </div>
+          </div>
+          <div class="image-card">
+            <img src="images/practice-meize-3.jpg" alt="梅泽金属智能导览系统截图3" style="width: 100%; height: 300px; object-fit: cover;">
+            <div style="padding: 16px; background: white;">
+              <div style="font-weight: 600; margin-bottom: 8px; color: var(--text-primary);">实际应用场景</div>
+              <div style="font-size: 14px; color: var(--text-secondary);">企业实践案例</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 优化手段展示 -->
+      <div class="optimization-section">
+        <h2 style="font-size: 32px; font-weight: 700; text-align: center; margin-bottom: 40px; display: flex; align-items: center; justify-content: center; gap: 12px;">
+          <svg style="width: 32px; height: 32px;" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16Z"/>
+          </svg>
+          特殊优化手段
+        </h2>
+
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px;">
+          <div class="optimization-card">
+            <img src="images/about-image-optimization.jpg" alt="图片优化" style="width: 100%; height: 300px; border-radius: 12px; margin-bottom: 20px; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+            <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 12px; color: var(--primary-green);">图片内容优化</h3>
+            <ul style="line-height: 2; color: var(--text-secondary);">
+              <li>智能图片压缩与懒加载</li>
+              <li>响应式图片适配</li>
+              <li>CDN加速分发</li>
+              <li>WebP格式支持</li>
+            </ul>
+          </div>
+          <div class="optimization-card">
+            <img src="images/about-performance.jpg" alt="性能优化" style="width: 100%; height: 300px; border-radius: 12px; margin-bottom: 20px; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+            <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 12px; color: var(--primary-green);">性能优化</h3>
+            <ul style="line-height: 2; color: var(--text-secondary);">
+              <li>FLIP动画技术</li>
+              <li>后端数据筛选与映射</li>
+              <li>实时数据流处理</li>
+              <li>缓存策略优化</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 全局Footer -->
+    <footer class="global-footer">
+      <div class="footer-content">
+        <div class="footer-buttons">
+          <button class="footer-link about-link active" type="button" aria-label="当前页面：关于项目" aria-current="page">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16Z"/>
+            </svg>
+            关于项目
+          </button>
+          <span class="footer-divider">|</span>
+          <button class="footer-link license-link" type="button" aria-label="查看开源许可证">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+            </svg>
+            开源许可证
+          </button>
+        </div>
+        <div class="footer-copyright">
+          <span class="footer-text">© 2025 沈阳农业大学昆虫博物馆</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ==================== 全局悬浮AI聊天组件 ==================== -->
+  <div id="floating-ai-chat" class="floating-ai-chat">
+    <!-- 悬浮按钮 -->
+    <button id="floating-ai-btn" class="floating-ai-btn" type="button" aria-label="打开AI助手">
+      <img src="images/ai-chat-icon.png" alt="AI助手" class="floating-ai-icon">
+    </button>
+    
+    <!-- 聊天窗口 -->
+    <div id="floating-ai-window" class="floating-ai-window">
+      <div class="floating-ai-header">
+        <div class="floating-ai-header-content">
+          <img src="images/ai-chat-icon.png" alt="AI助手" class="floating-ai-header-icon">
+          <div>
+            <h3>沈小农 - 智能导览助手</h3>
+            <p class="floating-ai-subtitle">我是沈小农，可以回答您的问题</p>
+          </div>
+        </div>
+        <button id="floating-ai-close" class="floating-ai-close" type="button" aria-label="关闭">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
+          </svg>
+        </button>
+      </div>
+      
+      <div class="floating-ai-body">
+        <!-- 预设问题 -->
+        <div id="floating-preset-questions" class="floating-preset-questions">
+          <!-- 动态生成预设问题 -->
+        </div>
+        
+        <!-- 自定义输入 -->
+        <div class="floating-custom-question">
+          <textarea id="floating-custom-input" placeholder="输入您想问的问题..." rows="2"></textarea>
+          <button id="floating-ask-btn" class="floating-ask-btn" type="button" aria-label="发送问题">
+            <svg viewBox="0 0 24 24" fill="currentColor" style="width:20px;height:20px;">
+              <path d="M2,21L23,12L2,3V10L17,12L2,14V21Z"/>
+            </svg>
+          </button>
+        </div>
+        
+        <!-- AI回答容器 -->
+        <div id="floating-ai-answer-container" class="floating-ai-answer-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 彩蛋页面 ==================== -->
+  <div id="easter-egg-page" class="page easter-egg-page">
+    <div class="easter-egg-container">
+      <!-- 返回按钮 -->
+      <button class="easter-egg-back-btn" id="easter-egg-back-btn" type="button" aria-label="返回">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+        </svg>
+        <span>返回</span>
+      </button>
+      
+      <!-- 科技感内容 -->
+      <div class="easter-egg-content">
+        <div class="easter-egg-title-wrapper">
+          <h1 class="easter-egg-title">科技扶农</h1>
+          <h2 class="easter-egg-subtitle">沈农有我</h2>
+        </div>
+        
+        <div class="easter-egg-divider"></div>
+        
+        <div class="easter-egg-title-wrapper">
+          <h1 class="easter-egg-title">振兴乡村</h1>
+          <h2 class="easter-egg-subtitle">植保有我</h2>
+        </div>
+      </div>
+      
+      <!-- 科技感装饰元素 -->
+      <div class="easter-egg-particles"></div>
+      <div class="easter-egg-grid"></div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

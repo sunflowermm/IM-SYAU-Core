@@ -1,0 +1,524 @@
+/* ==================== 全局悬浮AI聊天组件 ==================== */
+
+/**
+ * 悬浮AI聊天组件容器
+ * 支持拖拽和点击功能，可在屏幕任意位置自由移动
+ */
+.floating-ai-chat {
+  position: fixed;
+  /* 默认位置：右下角，但可以通过JS动态设置到任意位置 */
+  bottom: auto;
+  right: auto;
+  left: auto;
+  top: auto;
+  z-index: 1000;
+  font-family: inherit;
+  transition: none; /* 拖拽时不需要transition，避免延迟 */
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  /* 确保在所有设备上都能正常显示 */
+  pointer-events: auto;
+  /* 优化性能 */
+  will-change: transform, left, top;
+  /* 默认位置：右下角（首次加载时） */
+  /* 通过JS动态设置位置，支持屏幕任意位置 */
+}
+
+/**
+ * 悬浮按钮
+ * 支持拖拽和点击，优化交互体验
+ */
+.floating-ai-btn {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-green) 0%, var(--dark-green) 100%);
+  border: 3px solid white;
+  box-shadow: 0 4px 20px rgba(82, 196, 26, 0.4), 0 0 0 0 rgba(82, 196, 26, 0.5);
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.1s ease-out;
+  position: relative;
+  overflow: hidden;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+  /* 优化拖拽性能 */
+  touch-action: none;
+  /* 确保按钮可点击 */
+  pointer-events: auto;
+  /* 优化性能 */
+  will-change: transform;
+}
+
+.floating-ai-btn:active {
+  cursor: grabbing;
+}
+
+.floating-ai-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.floating-ai-btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.floating-ai-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 30px rgba(82, 196, 26, 0.5), 0 0 0 4px rgba(82, 196, 26, 0.2);
+}
+
+.floating-ai-btn:active {
+  transform: scale(0.95);
+}
+
+.floating-ai-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+/**
+ * 聊天窗口
+ * 支持动态位置调整，确保不超出屏幕且不挡住悬浮球
+ * 参考现代前端设计：毛玻璃效果、流畅动画
+ */
+.floating-ai-window {
+  position: absolute;
+  bottom: 80px;
+  right: 0;
+  width: 380px;
+  max-width: calc(100vw - 40px);
+  max-height: calc(100vh - 100px);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(82, 196, 26, 0.1);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideUpFadeIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  border: 1px solid rgba(183, 235, 143, 0.3);
+  transition: right 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+              left 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+              bottom 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+              top 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform, opacity;
+  z-index: 1001;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.floating-ai-window.active {
+  display: flex;
+  /* 现代前端设计：添加微妙的动画效果 */
+  animation: slideUpFadeIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes slideUpFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px) scale(0.96);
+  }
+  50% {
+    opacity: 0.9;
+    transform: translateY(-2px) scale(1.01);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 窗口头部 - 现代前端设计：毛玻璃效果 */
+.floating-ai-header {
+  background: linear-gradient(135deg, rgba(82, 196, 26, 0.95) 0%, rgba(56, 158, 13, 0.95) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  z-index: 1;
+}
+
+.floating-ai-header-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.floating-ai-header-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.floating-ai-header h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+  color: white;
+}
+
+.floating-ai-subtitle {
+  font-size: 12px;
+  opacity: 0.9;
+  margin: 0;
+  color: white;
+}
+
+.floating-ai-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.floating-ai-close svg {
+  width: 18px;
+  height: 18px;
+}
+
+.floating-ai-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+/* 窗口主体 - 优化滚动体验 */
+.floating-ai-body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 500px;
+  /* 优化滚动体验 */
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  /* 自定义滚动条样式 */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(82, 196, 26, 0.2) transparent;
+}
+
+/* Webkit浏览器滚动条样式 */
+.floating-ai-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.floating-ai-body::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 3px;
+}
+
+.floating-ai-body::-webkit-scrollbar-thumb {
+  background: rgba(82, 196, 26, 0.2);
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+.floating-ai-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(82, 196, 26, 0.4);
+}
+
+/* 预设问题 */
+.floating-preset-questions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* 预设问题按钮 - 现代前端设计：微交互效果 */
+.floating-preset-question-btn {
+  padding: 12px 16px;
+  background: rgba(246, 255, 237, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--border-green);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  text-align: left;
+  font-family: inherit;
+  position: relative;
+  overflow: hidden;
+  /* 现代前端设计：添加微妙的阴影 */
+  box-shadow: 0 2px 4px rgba(82, 196, 26, 0.05);
+}
+
+.floating-preset-question-btn::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  background: var(--primary-green);
+  transition: width 0.3s ease;
+}
+
+.floating-preset-question-btn:hover {
+  background: var(--primary-green);
+  color: white;
+  border-color: var(--primary-green);
+  transform: translateX(4px) scale(1.02);
+  box-shadow: 0 4px 12px rgba(82, 196, 26, 0.3);
+  /* 现代前端设计：添加微妙的动画效果 */
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.floating-preset-question-btn:hover::before {
+  width: 4px;
+}
+
+/* 自定义输入 - 优化键盘弹出时的对齐 */
+.floating-custom-question {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  border-top: 1px solid var(--border-green);
+  padding-top: 16px;
+  /* 确保在移动端键盘弹出时，输入框能正确对齐 */
+  position: relative;
+  z-index: 1;
+}
+
+.floating-custom-question textarea {
+  flex: 1;
+  padding: 12px;
+  border: 2px solid var(--border-green);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-family: inherit;
+  resize: none;
+  transition: all 0.2s ease;
+  background: var(--bg-white);
+  color: var(--text-primary);
+  min-height: 44px;
+  max-height: 120px;
+  /* 优化移动端键盘弹出时的对齐 */
+  -webkit-appearance: none;
+  appearance: none;
+  /* 确保输入框在键盘弹出时正确对齐 */
+  align-self: flex-end;
+}
+
+.floating-custom-question textarea:focus {
+  outline: none;
+  border-color: var(--primary-green);
+  box-shadow: 0 0 0 3px rgba(82, 196, 26, 0.1);
+}
+
+.floating-ask-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-green) 0%, var(--dark-green) 100%);
+  border: none;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(82, 196, 26, 0.3);
+  /* 确保按钮与输入框底部对齐 */
+  align-self: flex-end;
+  margin-bottom: 0;
+}
+
+.floating-ask-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(82, 196, 26, 0.4);
+}
+
+.floating-ask-btn:active {
+  transform: scale(0.95);
+}
+
+.floating-ask-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* AI回答容器 - 优化滚动体验，参考现代前端设计 */
+.floating-ai-answer-container {
+  min-height: 100px;
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* 优化滚动体验：平滑滚动 */
+  scroll-behavior: smooth;
+  /* 自定义滚动条样式，参考现代前端设计 */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(82, 196, 26, 0.3) transparent;
+  /* Webkit浏览器滚动条样式 */
+  -webkit-overflow-scrolling: touch;
+  padding: 16px;
+  background: var(--bg-green);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-green);
+  margin-top: auto;
+}
+
+/* Webkit浏览器滚动条样式优化 */
+.floating-ai-answer-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.floating-ai-answer-container::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 3px;
+}
+
+.floating-ai-answer-container::-webkit-scrollbar-thumb {
+  background: rgba(82, 196, 26, 0.3);
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+.floating-ai-answer-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(82, 196, 26, 0.5);
+}
+
+.floating-answer-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  padding: 12px;
+}
+
+.floating-answer-loading .loading-dots {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.floating-answer-loading .loading-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary-green);
+  animation: dotBounce 1.4s infinite ease-in-out;
+}
+
+.floating-answer-loading .loading-dots span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.floating-answer-loading .loading-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.floating-answer-loading .loading-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes dotBounce {
+  0%, 80%, 100% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+.floating-answer-content {
+  color: var(--text-primary);
+  font-size: 14px;
+  line-height: 1.8;
+  padding: 12px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* ==================== 响应式设计 ==================== */
+/**
+ * 响应式设计
+ * 确保悬浮球在不同设备上都能正常工作
+ * 支持移动端和桌面端的优化体验
+ */
+
+/* 平板和移动设备 */
+@media (max-width: 768px) {
+  .floating-ai-btn {
+    width: 56px;
+    height: 56px;
+  }
+  
+  .floating-ai-icon {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .floating-ai-window {
+    width: calc(100vw - 32px);
+    max-width: 380px;
+    max-height: calc(100vh - 80px);
+    bottom: 72px;
+    right: 0;
+  }
+  
+  .floating-ai-body {
+    padding: 16px;
+    max-height: 400px;
+  }
+}
+
+/* 小屏幕移动设备 */
+@media (max-width: 480px) {
+  .floating-ai-window {
+    width: calc(100vw - 20px);
+    max-width: calc(100vw - 20px);
+    max-height: calc(100vh - 80px);
+    right: 10px;
+    left: 10px;
+  }
+  
+  .floating-ai-body {
+    padding: 12px;
+    max-height: 350px;
+  }
+}
+
