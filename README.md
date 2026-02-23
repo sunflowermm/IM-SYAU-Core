@@ -71,6 +71,7 @@ sequenceDiagram
 ```
 IM-SYAU-Core/
 ├── README.md
+├── LICENSE                        # MIT 许可证（沈阳农业大学）
 ├── 沈阳农业大学-logo-2048px.png   # 校徽
 ├── data/
 │   ├── exhibitions.json
@@ -126,4 +127,6 @@ IM-SYAU-Core/
 
 ---
 
-<p align="center"><strong>最后更新</strong>：2026 年</p>
+<p align="center">
+  <strong>最后更新</strong>：2026 年 · 本 Core 采用 <a href="LICENSE">MIT License</a>，版权归沈阳农业大学所有
+</p>
