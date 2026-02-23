@@ -148,6 +148,13 @@ IM-SYAU-Core/
 
 ---
 
+## 鸣谢
+
+本 Core 完全依托 [XRK-AGT](https://github.com/sunflowermm/XRK-AGT) 框架提供的设备管理、事件系统、
+AIStream 工作流与插件加载能力实现，特此致谢。
+
+---
+
 <p align="center">
   <strong>最后更新</strong>：2026 年 · 本 Core 采用 <a href="LICENSE">MIT License</a>，版权归沈阳农业大学所有
 </p>
