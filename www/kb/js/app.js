@@ -2270,13 +2270,12 @@ function updateFloatingPresetQuestions() {
       '项目的应用场景有哪些？'
     ];
   }
-  // 许可证页面预设问题
   else if (currentPageId === 'license-page') {
     questions = [
-      '许可证的具体内容是什么？',
-      '如何使用开源代码？',
-      '有哪些使用限制？',
-      '如何贡献代码？'
+      'MIT 许可证允许商用吗？',
+      '使用本系统需要保留版权声明吗？',
+      '可以修改后闭源发布吗？',
+      '完整许可证文本在哪里？'
     ];
   }
   
