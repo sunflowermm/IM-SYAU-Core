@@ -22,11 +22,12 @@ export default class DeviceBLE extends plugin {
     this.dataFile = path.join(paths.data, 'blues', 'ble_data.json');
     this.dataPath = path.dirname(this.dataFile);
     
-    // 设置定时任务
+    // 半小时清理；log:false 避免挂机刷「开始执行/执行完成」
     this.task = {
       name: '蓝牙数据清理',
       cron: '0 */30 * * * *',
-      fnc: () => this.autoClearOldData()
+      fnc: () => this.autoClearOldData(),
+      log: false
     };
   }
 
