@@ -1,8 +1,8 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs/promises';
-import AIStream from '../../../src/infrastructure/aistream/aistream.js';
-import BotUtil from '../../../src/utils/botutil.js';
+import AiWorkflow from '../../../src/infrastructure/ai-workflow/ai-workflow.js';
+import RuntimeUtil from '../../../src/utils/runtime-util.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = path.join(__dirname, '..', 'data');
@@ -17,7 +17,7 @@ async function loadExhibitions() {
     exhibitionsCache = JSON.parse(raw);
     return exhibitionsCache;
   } catch (err) {
-    BotUtil.makeLog('warn', `[kb-stream] 读取展区数据失败: ${err.message}`, 'KbStream');
+    RuntimeUtil.makeLog('warn', `[kb-stream] 读取展区数据失败: ${err.message}`, 'KbStream');
     return {};
   }
 }
@@ -29,7 +29,7 @@ async function loadKnowledge() {
     knowledgeCache = JSON.parse(raw);
     return Array.isArray(knowledgeCache) ? knowledgeCache : [];
   } catch (err) {
-    BotUtil.makeLog('warn', `[kb-stream] 读取知识库失败: ${err.message}`, 'KbStream');
+    RuntimeUtil.makeLog('warn', `[kb-stream] 读取知识库失败: ${err.message}`, 'KbStream');
     return [];
   }
 }
@@ -38,7 +38,7 @@ async function loadKnowledge() {
  * 昆虫博物馆知识库工作流
  * 注册 MCP 工具供 AI 查询展区与知识库，回答游客问题
  */
-export default class KbStream extends AIStream {
+export default class KbStream extends AiWorkflow {
   constructor() {
     super({
       name: 'kb-stream',
@@ -53,7 +53,7 @@ export default class KbStream extends AIStream {
   async init() {
     await super.init();
     this.registerKbTools();
-    BotUtil.makeLog('info', `工作流 "${this.name}" 已初始化`, 'KbStream');
+    RuntimeUtil.makeLog('info', `工作流 "${this.name}" 已初始化`, 'KbStream');
     return true;
   }
 

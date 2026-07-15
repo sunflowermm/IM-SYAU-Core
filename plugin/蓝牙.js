@@ -3,7 +3,7 @@ import fs from 'fs/promises';
 import paths from '#utils/paths.js';
 import { decodeUnicode, ACTIVE_WINDOW } from '../utils/ble-utils.js';
 
-export default class DeviceBLE extends plugin {
+export default class DeviceBLE extends PluginBase {
   constructor() {
     super({
       name: '蓝牙信标管理',
@@ -41,7 +41,7 @@ export default class DeviceBLE extends plugin {
     }
     
     setTimeout(() => {
-      Bot.on('device.ble_beacon_batch', async (e) => {
+      AgentRuntime.on('device.ble_beacon_batch', async (e) => {
         await this.handleBLEData(e);
       });
 

@@ -57,8 +57,8 @@ export default {
         if (!question) {
           return HttpResponse.validationError(res, '缺少问题参数');
         }
-        const StreamLoader = (await import('#infrastructure/aistream/loader.js')).default;
-        const stream = StreamLoader.getStream('kb-stream');
+        const AiStreamLoader = (await import('#infrastructure/ai-workflow/loader.js')).default;
+        const stream = AiStreamLoader.getStream('kb-stream');
         if (!stream) {
           return res.status(503).json({
             success: false,
@@ -84,8 +84,8 @@ export default {
     {
       method: 'POST',
       path: '/api/kb/exhibitions',
-      handler: HttpResponse.asyncHandler(async (req, res, Bot) => {
-        if (!Bot?.checkApiAuthorization?.(req)) {
+      handler: HttpResponse.asyncHandler(async (req, res, AgentRuntime) => {
+        if (!AgentRuntime?.checkApiAuthorization?.(req)) {
           return HttpResponse.forbidden(res, '未授权访问');
         }
         const file = path.join(KB_DATA_DIR, 'exhibitions.json');

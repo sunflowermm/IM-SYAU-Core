@@ -187,8 +187,8 @@ export default {
     {
       method: 'DELETE',
       path: '/api/ble/data',
-      handler: HttpResponse.asyncHandler(async (req, res, Bot) => {
-        if (!Bot?.checkApiAuthorization?.(req)) {
+      handler: HttpResponse.asyncHandler(async (req, res, AgentRuntime) => {
+        if (!AgentRuntime?.checkApiAuthorization?.(req)) {
           return HttpResponse.forbidden(res, '未授权');
         }
         await fs.mkdir(path.dirname(BLE_DATA_PATH), { recursive: true });

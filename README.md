@@ -26,8 +26,8 @@
 ```mermaid
 graph LR
   subgraph AGT["XRK-AGT 框架"]
-    ApiLoader[ApiLoader]
-    StreamLoader[StreamLoader]
+    HttpApiLoader[HttpApiLoader]
+    AiStreamLoader[AiStreamLoader]
     Static[静态服务]
   end
   
@@ -38,8 +38,8 @@ graph LR
     data[(data/*.json)]
   end
   
-  ApiLoader --> http
-  StreamLoader --> stream
+  HttpApiLoader --> http
+  AiStreamLoader --> stream
   Static --> www
   stream --> data
   http --> data
@@ -115,8 +115,8 @@ IM-SYAU-Core/
 
 | 目录    | 框架加载方式     | 说明 |
 |---------|------------------|------|
-| `http/` | ApiLoader 扫描   | 注册 `/api/ble/*`、`/api/kb/*` |
-| `stream/` | StreamLoader 扫描 | 注册 `kb-stream`，MCP 工具读 `data/` |
+| `http/` | HttpApiLoader 扫描   | 注册 `/api/ble/*`、`/api/kb/*` |
+| `stream/` | AiStreamLoader 扫描 | 注册 `kb-stream`，MCP 工具读 `data/` |
 | `www/kb/` | 静态挂载到 `/kb` | 访问 `/kb/index.html` |
 
 前端 `www/kb/js/app.js` 通过 `API` 常量与 `apiGet` / `apiPost` 对接上述路由，统一处理 `success`、`data`、`message`。
@@ -151,7 +151,7 @@ IM-SYAU-Core/
 ## 鸣谢
 
 本 Core 完全依托 [XRK-AGT](https://github.com/sunflowermm/XRK-AGT) 框架提供的设备管理、事件系统、
-AIStream 工作流与插件加载能力实现，特此致谢。
+AiWorkflow 工作流与插件加载能力实现，特此致谢。
 
 ---
 
