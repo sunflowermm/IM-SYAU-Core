@@ -5,7 +5,7 @@
 <h1 align="center">IM-SYAU-Core 沈阳农业大学昆虫博物馆智能导览核心</h1>
 
 <p align="center">
-  基于 <strong>XRK-AGT</strong> 的智能导览 Core：蓝牙信标定位、展区信息、AI 问答（aistream + 知识库 MCP 工具）
+  基于 <strong>XRK-AGT</strong> 的智能导览 Core：蓝牙信标定位、展区信息、AI 问答（ai-workflow + 知识库 MCP 工具）
 </p>
 
 <p align="center">
@@ -27,7 +27,7 @@
 graph LR
   subgraph AGT["XRK-AGT 框架"]
     HttpApiLoader[HttpApiLoader]
-    AiStreamLoader[AiStreamLoader]
+    AiWorkflowLoader[AiWorkflowLoader]
     Static[静态服务]
   end
   
@@ -39,7 +39,7 @@ graph LR
   end
   
   HttpApiLoader --> http
-  AiStreamLoader --> stream
+  AiWorkflowLoader --> stream
   Static --> www
   stream --> data
   http --> data
@@ -116,7 +116,7 @@ IM-SYAU-Core/
 | 目录    | 框架加载方式     | 说明 |
 |---------|------------------|------|
 | `http/` | HttpApiLoader 扫描   | 注册 `/api/ble/*`、`/api/kb/*` |
-| `stream/` | AiStreamLoader 扫描 | 注册 `kb-stream`，MCP 工具读 `data/` |
+| `stream/` | AiWorkflowLoader 扫描 | 注册 `kb-stream`，MCP 工具读 `data/` |
 | `www/kb/` | 静态挂载到 `/kb` | 访问 `/kb/index.html` |
 
 前端 `www/kb/js/app.js` 通过 `API` 常量与 `apiGet` / `apiPost` 对接上述路由，统一处理 `success`、`data`、`message`。
@@ -141,7 +141,7 @@ IM-SYAU-Core/
 
 ## 配置与数据
 
-- **AI 问答**：由框架 aistream/LLM 统一配置，本 Core 仅提供 `kb-stream` 与 `data/`；无需在此配置 API Key。
+- **AI 问答**：由框架 ai-workflow/LLM 统一配置，本 Core 仅提供 `kb-stream` 与 `data/`；无需在此配置 API Key。
 - **知识库**：`data/exhibitions.json`（展区）、`data/knowledge.json`（关键词+答案）供 MCP 工具使用。
 - **蓝牙**：`data/blues/ble_data.json`（项目根下 `data/`）由外部采集写入；路径通过 AGT `paths.data` 解析。
 - **参观统计**：`www/kb/data/visitor-stats.json` 可选，格式 `[{ "date": "YYYY-MM-DD", "count": n }]`。

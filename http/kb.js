@@ -57,8 +57,8 @@ export default {
         if (!question) {
           return HttpResponse.validationError(res, '缺少问题参数');
         }
-        const AiStreamLoader = (await import('#infrastructure/ai-workflow/loader.js')).default;
-        const stream = AiStreamLoader.getStream('kb-stream');
+        const AiWorkflowLoader = (await import('#infrastructure/ai-workflow/loader.js')).default;
+        const stream = AiWorkflowLoader.getWorkflow('kb-stream');
         if (!stream) {
           return res.status(503).json({
             success: false,
